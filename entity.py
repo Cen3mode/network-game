@@ -5,15 +5,16 @@ class EntityHandler:
         self.enties = []
 
     def sendall(self, socket):
-        socket.sendall(pickle.dumps(len(self.enties)))
+        socket.send(pickle.dumps(len(self.enties)))
         for entity in self.enties :
-            socket.sendall(entity)
+            socket.send(pickle.dumps(entity))
 
     def recvall(self, socket):
         entityCnt = pickle.loads(socket.recv(1024))
         print(entityCnt)
-        for entity in range(entityCnt):
-            self.enties.insert(entity, pickle.loads(socket.recv(2048)))
+        if type(entityCnt) == int :
+            for entity in range(entityCnt):
+                self.enties.insert(entity, pickle.loads(socket.recv(2048)))
 
     def get(self, name):
         for entity in self.enties :

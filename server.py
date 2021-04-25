@@ -11,10 +11,7 @@ class Server:
 
     def _playerHandler(self, conn, login):
         while True:
-            try:
-                self.entities.sendall(conn)
-            except:
-                break
+            self.entities.sendall(conn)
         conn.close()
 
     def _startServer(self):
@@ -46,7 +43,7 @@ class Server:
                 self.entities.get(key)._login()
                 conn.send(str.encode('S'))
                 print("Login SUCCESSFULL")
-                threading.Thread(self._playerHandler, (conn, key)).run()
+                threading.Thread(target=self._playerHandler, args=(conn, key)).run()
             
 
 srv = Server()
