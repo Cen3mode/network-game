@@ -1,4 +1,4 @@
-import pygame, socket, sys, pickle, threading
+import socket, sys, pickle
 from entity import *
 
 class Client:
@@ -10,10 +10,11 @@ class Client:
         self.entities = EntityHandler()
         self._connect()
 
-    def _playerHandler(self):
-        print("Starting")
-        while True :
-            self.entities.recvall(self.socket)
+    def frameBegin(self):
+        self.entities.recvall(self.socket)
+        
+    def frameEnd(self):
+        self.entities.sendme(self.socket, self.login, "Player")
 
     def _connect(self):
         self.socket.connect((self.ip, self.port))
@@ -22,6 +23,3 @@ class Client:
             print("Connection FAILED")
         else:
             print("Connecition SUCCESSFULL")
-            threading.Thread(self._playerHandler(),[])
-
-cli = Client(sys.argv[1], sys.argv[2], sys.argv[3])
