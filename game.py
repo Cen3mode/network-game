@@ -9,7 +9,7 @@ class Game(Client):
         self.running = True
 
         pygame.init()
-        self.screen = pygame.display.set_mode((400, 400))
+        self.screen = pygame.display.set_mode((200, 200))
 
     def _update(self):
         events = pygame.event.get()
@@ -17,11 +17,11 @@ class Game(Client):
             if event.type == pygame.QUIT :
                 self.running = False
         #self.entities.updateall()
-        self.entities.updateme(self.login, "Player", events)
+        self.entities.updateMe(self.login, "Player", events)
 
     def _draw(self):
         self.screen.fill(0)
-        self.entities.drawall(self.screen)
+        self.entities.drawAll(self.screen)
         pygame.display.flip()
 
     def run(self):

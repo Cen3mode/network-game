@@ -5,19 +5,37 @@ class EntityHandler:
         self.entities = []
         self.HEADERSIZE = HEADERSIZE
 
-    def sendme(self, socket, name, type):
+    def sendMe(self, socket, name, type):
         me = [self.get(name, type)]
         if me != None :
             msg = pickle.dumps(me)
             msg = bytes(f"{len(msg):<{self.HEADERSIZE}}", "utf-8") + msg
             socket.sendall(msg)
 
-    def sendall(self, socket):
+    def sendAll(self, socket):
         msg = pickle.dumps(self.entities)
         msg = bytes(f"{len(msg):<{self.HEADERSIZE}}", "utf-8") + msg
         socket.sendall(msg)
 
-    def recvall(self, socket):
+    def sendActive(self, socket):
+        active = []
+        for entity in self.entities :
+            if entity.active :
+                active.append(entity)
+        msg = pickle.dumps(active)
+        msg = bytes(f"{len(msg):<{self.HEADERSIZE}}", "utf-8") + msg
+        socket.sendall(msg)
+
+    def sendChanged(self, socket):
+        changed = []
+        for entity in self.entities :
+            if entity.changed :
+                changed.append(entity)
+        msg = pickle.dumps(changed)
+        msg = bytes(f"{len(msg):<{self.HEADERSIZE}}", "utf-8") + msg
+        socket.sendall(msg)
+
+    def recvAll(self, socket):
         full_msg = b''
         new_msg = True
         while True:
@@ -32,6 +50,7 @@ class EntityHandler:
                 decodedMsg = pickle.loads(full_msg[self.HEADERSIZE:])
                 #if decodedMsg != None :
                 for nEntity in decodedMsg :
+                    nEntity.changed = False
                     searchResult = self.getIndex(nEntity.name, nEntity.type)
                     if searchResult != None :
                         self.entities[searchResult] = nEntity
@@ -54,41 +73,36 @@ class EntityHandler:
     def add(self, entity):
         self.entities.append(entity)
 
-    def drawall(self, surface):
+    def drawAll(self, surface):
         for entity in self.entities :
             entity._draw(surface)
 
-    def updateall(self):
+    def updateAll(self, events = []):
         for entity in self.entities :
-            entity._update()
+            entity._update(events)
 
-    def updateme(self, name, type="Player", events=[]):
+    def updateMe(self, name, type="Player", events=[]):
         me = self.get(name, type)
         if me != None :
-            for event in events :
-                if event.type == pygame.KEYDOWN :
-                    if event.key == pygame.K_RIGHT :
-                        me.x += 5
-                    if event.key == pygame.K_LEFT :
-                        me.x -= 5
-                    if event.key == pygame.K_UP :
-                        me.y -= 5
-                    if event.key == pygame.K_DOWN :
-                        me.y += 5
+            me._update(events)
 
 class Entity:
     def __init__(self, x=0, y=0, color = (0,0,0), type = "None", name = "None"):
         self.x, self.y = x, y
         self.active = False
+        self.changed = True
         self.color = color
         self.name = name
         self.type = type
 
     def _draw(self, surface):
-        pass
+        if self.active :
+            pass
 
     def _update(self, events):
-        pass
+        self.changed = False
+        if self.active :
+            pass
 
     def _activate(self):
         self.active = True
@@ -103,7 +117,26 @@ class Player(Entity):
 
     def _draw(self, surface):
         super()._draw(surface)
-        pygame.draw.rect(surface, self.color, (self.x, self.y, 25, 25), 0)
+        if self.active :
+            pygame.draw.rect(surface, self.color, (self.x, self.y, 25, 25), 0)
+
+    def _update(self, events):
+        super()._update(events)
+        if self.active :
+            for event in events :
+                if event.type == pygame.KEYDOWN :
+                    if event.key == pygame.K_RIGHT :
+                        self.x += 5
+                        self.changed = True
+                    if event.key == pygame.K_LEFT :
+                        self.x -= 5
+                        self.changed = True
+                    if event.key == pygame.K_UP :
+                        self.y -= 5
+                        self.changed = True
+                    if event.key == pygame.K_DOWN :
+                        self.y += 5
+                        self.changed = True
 
     def login(self):
         super()._activate()

@@ -11,10 +11,10 @@ class Client:
         self._connect()
 
     def frameBegin(self):
-        self.entities.recvall(self.socket)
+        self.entities.recvAll(self.socket)
         
     def frameEnd(self):
-        self.entities.sendme(self.socket, self.login, "Player")
+        self.entities.sendChanged(self.socket)
 
     def _connect(self):
         self.socket.connect((self.ip, self.port))

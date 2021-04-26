@@ -12,11 +12,10 @@ class Server:
     def _playerHandler(self, conn, login, entities):
         while True:
             try:
-                print(entities.entities)
-                entities.sendall(conn)
-                entities.recvall(conn)
+                entities.sendActive(conn)
+                entities.recvAll(conn)
             except:
-                entities.get(login).logout()
+                entities.get(login, "Player").logout()
                 print(login + " has disconnected")
                 break
         conn.close()
@@ -59,4 +58,4 @@ class Server:
     def _handlePlayer(self, conn, key):
         threading.Thread(target=self._playerHandler,args=(conn, key, self.entities)).start()
 
-srv = Server("localhost", 8888)
+srv = Server(sys.argv[1], 8888)
