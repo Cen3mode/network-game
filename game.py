@@ -33,5 +33,5 @@ class Game(Client):
             super().frameEnd()
         quit()
 
-gm = Game("localhost", 8888, sys.argv[1])
+gm = Game(sys.argv[1], sys.argv[2], sys.argv[3])
 gm.run()

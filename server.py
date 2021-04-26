@@ -58,4 +58,4 @@ class Server:
     def _handlePlayer(self, conn, key):
         threading.Thread(target=self._playerHandler,args=(conn, key, self.entities)).start()
 
-srv = Server(sys.argv[1], 8888)
+srv = Server(sys.argv[1], sys.argv[2])
