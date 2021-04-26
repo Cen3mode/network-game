@@ -12,7 +12,7 @@ class Server:
     def _playerHandler(self, conn, login, entities):
         while True:
             try:
-                entities.sendActive(conn)
+                entities.sendAll(conn)
                 entities.recvAll(conn)
             except:
                 entities.get(login, "Player").logout()
@@ -41,7 +41,6 @@ class Server:
                     print("Login FAILED")
                 else :
                     player.login()
-                    player.randomColor()
                     conn.send(str.encode('S'))
                     print("Login SUCCESSFULL")
                     self._handlePlayer(conn, key)
