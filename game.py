@@ -10,6 +10,15 @@ class Game(Client):
 
         pygame.init()
         self.screen = pygame.display.set_mode((200, 200))
+        self.prevDeltaTime = 0
+        time = pygame.time.get_ticks()
+        self.prevDeltaTime = time
+
+    def _deltaTime(self):
+        time = pygame.time.get_ticks()
+        deltaTime = (time - self.prevDeltaTime) / 1000
+        self.prevDeltaTime = time
+        return deltaTime
 
     def _update(self):
         events = pygame.event.get()

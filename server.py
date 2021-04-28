@@ -7,17 +7,22 @@ class Server:
         self.port = int(port)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.entities = EntityHandler()
+        self.lock = threading.Lock()
         self._startServer()
 
     def _playerHandler(self, conn, login, entities):
         while True:
+            self.lock.acquire()
             try:
                 entities.sendAll(conn)
                 entities.recvAll(conn)
             except:
                 entities.get(login, "Player").logout()
-                print(login + " has disconnected")
+                print(login + " has disconnected with error " + str(socket.error))
+                self.lock.release()
                 break
+            finally:
+                self.lock.release()
         conn.close()
 
     def _startServer(self):
