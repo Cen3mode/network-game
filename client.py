@@ -1,4 +1,4 @@
-import socket, sys, pickle
+import socket, sys, pickle, threading
 from entity import *
 
 class Client:
@@ -16,7 +16,7 @@ class Client:
         
     def frameEnd(self):
         
-        self.entities.sendAll(self.socket)
+        self.entities.sendMe(self.socket, self.login, "Player")
 
     def _connect(self):
         self.socket.connect((self.ip, self.port))

@@ -51,6 +51,7 @@ class EntityHandler:
                 if len(full_msg)-self.HEADERSIZE == msglen:
                     decodedMsg = pickle.loads(full_msg[self.HEADERSIZE:])
                     #if decodedMsg != None :
+        
                     for nEntity in decodedMsg :
                         nEntity.changed = False
                         searchResult = self.getIndex(nEntity.name, nEntity.type)
@@ -58,6 +59,7 @@ class EntityHandler:
                             self.entities[searchResult] = nEntity
                         else :
                             self.entities.append(nEntity)
+        
                     break
 
     def get(self, name="None", type="None"):
